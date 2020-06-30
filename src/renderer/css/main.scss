@@ -1,0 +1,371 @@
+@import "../../../node_modules/typeface-roboto/index.css";
+@import "./reset";
+
+$backgroundMain: rgb(26, 26, 26);
+$backgroundLight: rgb(33, 33, 33);
+$fontColor: #E5E5E5;
+$fontColorDim: #A5A5A5;
+$fontColorDimHard: #888888;
+$fontColorBright: #FFF;
+
+$singlePad: 8px;
+$doublePad: $singlePad * 2;
+$quadPad: $doublePad * 2;
+
+$halfPad: $singlePad / 2;
+
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    list-style: none;
+}
+
+html, body, #app {
+    height: 100%;
+    background: $backgroundMain;
+    color: $fontColor;
+    font-family: "Roboto";
+    font-size: 14px;
+    overflow: hidden;
+}
+
+button {
+    background: none;
+    color: inherit;
+    border: none;
+}
+
+@mixin simpleBox() {
+    padding: $singlePad $doublePad;
+}
+
+
+
+.context-menu-popup {
+    padding: $singlePad 0;
+
+    background: $backgroundLight;
+    position: absolute;
+
+    button {
+        display: block;
+        width: 100%;
+        text-align: left;
+
+        padding: $halfPad $doublePad;
+        padding-right: $quadPad * 2;
+        margin: $halfPad 0;
+        &:hover {
+            background: $backgroundMain;
+            color: $fontColorDim;
+        }
+    }
+}
+
+
+.file-tree {
+    @include simpleBox;
+    color: $fontColorDim;
+    height: 50%;
+
+    overflow-y: auto;
+    user-select: none;
+
+    li {
+        margin: $singlePad 0;
+        cursor: pointer;
+
+        &:hover {
+            color: $fontColor;
+        }
+    }
+    
+    .file-list {
+        padding-left: $doublePad;
+        border-left: 1px solid $fontColorDim;
+    }
+    
+    .directory {
+        position: relative;
+        padding-left: calc(#{$singlePad} + 1em);
+        img {
+            width: 1em;
+            position: absolute;
+            left: 0;
+        }
+        &.hidden img { width: 1em; }
+
+        &.hidden { color: $fontColorDimHard; }
+        &.hidden + .file-list { display: none; }
+    }
+}
+
+
+monaco-editor .breakpoint {
+    &::before {
+        height: 40%;
+        width: 40%;
+        background: red;
+        border-radius: 100%;
+        content: "";
+        display: block;
+        color: #e51400 !important;
+    }
+}
+
+#app {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+    flex-wrap: nowrap;
+}
+
+.sidebar {
+    width: 250px;
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    border-right: 1px solid black;
+
+    > * + * {
+        border-top: 1px solid black;
+    }
+}
+
+
+monaco-editor {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+input {
+    background: $backgroundLight;
+    border: none;
+    margin: 0;
+    border-bottom: 1px solid currentColor;
+    color: $fontColor;
+    padding: $halfPad;
+}
+
+.pass-list {
+    padding: $doublePad;
+    color: $fontColorDim;
+    height: 50%;
+
+    overflow-y: auto;
+    user-select: none;
+
+
+    &.is-experiencing-input {
+        color: $fontColorDim;
+
+        input { color: $fontColorBright; }
+    }
+
+    input {
+        width: 100%;
+    }
+
+    .header {
+        display: flex;
+        flex-wrap: nowrap;
+
+        padding: $singlePad 0;
+        border-bottom: 1px solid currentColor;
+        justify-content: flex-end;
+    
+        .button {
+            cursor: pointer;
+            &:hover { color: $fontColorBright; }
+        }
+    }
+
+    .pass-item {
+        margin: $singlePad 0;
+        padding: $halfPad;
+
+        cursor: pointer;
+
+        &:hover, &.active {
+            color: $fontColor;
+        }
+
+    }
+    
+
+
+    form { display: contents; }
+
+    h2 {
+        flex-grow: 1;
+        color: $fontColor;
+    }
+}
+
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: $backgroundMain;
+}
+::-webkit-scrollbar
+{
+    width: 12px;
+    background-color: $backgroundMain;
+}
+::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: $backgroundLight;
+}
+
+.main-view {
+    background: $backgroundLight;
+    min-width: 0;
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    .block + * {
+        margin-top: $doublePad;
+    }
+
+    input {
+        background: $backgroundMain;
+    }
+
+    h2 {
+        font-size: 20px;
+        border-bottom: 1px solid currentColor;
+        padding: 8px 0;
+        display: inline-block;
+    }
+
+    .panel-navigation {
+        flex-grow: 0;
+    }
+
+    .panel {
+        flex-grow: 1;
+        
+        .block {
+            padding: $doublePad $quadPad;
+        }
+
+        .block > * {
+            margin-top: $doublePad;    
+        }
+    }
+}
+.panel-navigation {
+    
+    background: $backgroundMain;
+
+    > button {
+        padding: $singlePad $doublePad;
+        background: $backgroundLight;
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
+
+        color: $fontColorDim;
+
+        &.active {
+            color: $fontColor;
+            border-bottom: none;
+        }
+    }
+}
+
+.custom-select {
+    display: inline-block;
+    background: $backgroundMain;
+    color: $fontColor;
+
+    position: relative;
+    border: 1px solid $fontColorDimHard;
+
+    > img {
+        position: absolute;
+        top: 50%;
+        right: $singlePad;
+        transform: translateY(-50%);
+        height: 40%;
+        opacity: 80%;
+        pointer-events: none;
+    }
+}
+
+.custom-select, .custom-select li {
+    padding: $singlePad;
+    padding-right: $quadPad;
+    user-select: none;
+}
+
+.custom-select .options {
+    position: absolute;
+    left: 0;
+    top: 100%;
+
+    background: $backgroundMain;
+    border: 1px solid black;
+
+    display: none;
+}
+
+.custom-select.active .options {
+    display: block;
+}
+
+.custom-select li:hover {
+    background: $backgroundLight;
+    cursor: pointer;
+}
+
+fieldset {
+    > label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: $singlePad;
+    }
+}
+
+.custom-searchbox {
+    display: inline-block;
+    position: relative;
+
+    &.expand .options-list{
+        display: block;
+    }
+
+    .options-list {
+        width: 100%;
+        background: $backgroundLight;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        border: 1px solid $fontColorDimHard;
+        display: none;
+
+        > * {
+           padding: $singlePad;
+           cursor: pointer;
+
+            &:hover {
+                background: $backgroundMain;
+            }
+        }
+
+        > * + * {
+            border-top: 1px solid $fontColorDimHard;
+        }
+    }
+}

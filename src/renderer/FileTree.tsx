@@ -59,10 +59,10 @@ export async function buildTree(path: string): Promise<Node> {
 import * as React from "react"
 
 
-function DirEntry({ dir }: { dir: Directory }) {
+function DirEntry({ dir, depth }) {
     let basename = nodePath.basename(dir.path)
 
-    let [hidden, setHidden] = React.useState(true)
+    let [hidden, setHidden] = React.useState(depth !== 0)
     let srcString = hidden ? "icons/directory.svg" : "icons/directory_open.svg"
     let icon = <img src={srcString} />
 
@@ -74,7 +74,7 @@ function DirEntry({ dir }: { dir: Directory }) {
         </li>)
 }
 
-function treeNode(node: Node) {
+function treeNode(node: Node, depth) {
     let basename = nodePath.basename(node.path)
     switch (node.kind) {
         case ItemType.File:
@@ -83,9 +83,9 @@ function treeNode(node: Node) {
             ]
         case ItemType.Directory:
             return <React.Fragment key={basename}>
-                <DirEntry dir={node} />
+                <DirEntry dir={node} depth={depth} />
                 <ul className="file-list">
-                    { node.items.map(treeNode) }
+                    { node.items.map(v => treeNode(v, depth + 1)) }
                 </ul>
             </React.Fragment>
     }
@@ -93,6 +93,6 @@ function treeNode(node: Node) {
 
 export function view(node: Node) {
     return <ul className="file-tree">
-        { treeNode(node) }
+        { treeNode(node, 0) }
     </ul>
 }

@@ -1,48 +1,70 @@
-import * as ReactDOM from "react-dom"
 import * as React from "react"
+import * as ReactDOM from "react-dom"
 
 import "./css/main.scss"
 
 import { createStore } from "redux"
+import { Provider } from "react-redux"
 
 import * as FileTree from "./FileTree"
+import { PassListContainer } from "./PassList"
 
 
-enum Action {
-    Increment,
-    Decrement
+export interface Pass {
+    name: string
 }
 
-function counter(state = 0, action: { type: Action }) {
-    switch(action.type) {
-        case Action.Increment: return state + 1
-        case Action.Decrement: return state - 1
+export interface Project {
+    passes: Pass[]
+}
+
+
+interface CreatePassAction {
+    kind: "CREATE_PASS"
+    pass: Pass
+}
+
+type ProjectAction = CreatePassAction
+
+
+function project(state: Project = {passes: []}, action: ProjectAction): Project {
+    switch (action.kind) {
+        case "CREATE_PASS":
+            return {passes: state.passes.concat([action.pass]) }
     }
 }
 
-let store = createStore(counter)
-
-store.subscribe(() => console.log(store.getState()))
-
-store.dispatch({ type: Action.Increment })
-store.dispatch({ type: Action.Decrement })
 
 
-function App() {
-    const [fileTree, setFileTree] = React.useState(FileTree.directory("./TestProject", []) as FileTree.Node)
 
-    FileTree.buildTree("./TestProject").then(tree => {
+
+const App = () => {
+    let projectDir = "./TestProject"
+    const [fileTree, setFileTree] = React.useState(FileTree.directory(projectDir, []) as FileTree.Node)
+
+    FileTree.buildTree(projectDir).then(tree => {
         setFileTree(tree)
     });
 
-    return <div className="app">
-        {FileTree.view(fileTree)}
-    </div>
+    return (<>        
+            {/* <PassListContainer /> */}
+            <div className="app">
+                {FileTree.view(fileTree)}
+            </div>
+    </>)
+}
+
+const Bootstrap = ({}) => {
+    const store = createStore(project)
+
+    return <Provider store={store}>
+        <App />
+    </Provider>
 }
 
 export function main() {
     ReactDOM.render(
-        <App></App>,
+        <Bootstrap />,
         document.getElementById("app")
     );
 }

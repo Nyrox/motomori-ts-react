@@ -3,62 +3,42 @@ import * as ReactDOM from "react-dom"
 
 import "./css/main.scss"
 
-import { createStore } from "redux"
-import { Provider } from "react-redux"
+import { Provider, useSelector } from "react-redux"
 
 import * as FileTree from "./FileTree"
 import { PassListContainer } from "./PassList"
+import * as Store from "./model/Store"
 
+import { PassDetailView } from "./PassView/index"
 
-export interface Pass {
-    name: string
-}
-
-export interface Project {
-    passes: Pass[]
-}
-
-
-interface CreatePassAction {
-    kind: "CREATE_PASS"
-    pass: Pass
-}
-
-type ProjectAction = CreatePassAction
-
-
-function project(state: Project = {passes: []}, action: ProjectAction): Project {
-    switch (action.kind) {
-        case "CREATE_PASS":
-            return {passes: state.passes.concat([action.pass]) }
-    }
-}
-
-
-
-
-
-const App = () => {
+const App = ({ store }) => {
     let projectDir = "./TestProject"
     const [fileTree, setFileTree] = React.useState(FileTree.directory(projectDir, []) as FileTree.Node)
 
-    FileTree.buildTree(projectDir).then(tree => {
-        setFileTree(tree)
-    });
+    React.useEffect(() => {
+        FileTree.buildTree(projectDir).then(tree => {
+            setFileTree(tree)
+        });
+    }, [false])
 
-    return (<>        
-            {/* <PassListContainer /> */}
-            <div className="app">
-                {FileTree.view(fileTree)}
-            </div>
+    const isDetailView = useSelector((state: Store.ApplicationState) => state.activePass !== null)
+
+    return (<>
+        <div className="sidebar">
+            <PassListContainer />
+            {FileTree.view(fileTree)}
+        </div>
+        <div className="main-view">
+            {isDetailView && <PassDetailView />}
+        </div>
     </>)
 }
 
-const Bootstrap = ({}) => {
-    const store = createStore(project)
+const Bootstrap = ({ }) => {
+    const store = Store.init()
 
     return <Provider store={store}>
-        <App />
+        <App store={store} />
     </Provider>
 }
 

@@ -166,7 +166,7 @@ input {
     &.is-experiencing-input {
         color: $fontColorDim;
 
-        input { color: $fontColorBright; }
+        input { color: $fontColorBright; margin: 0; }
     }
 
     input {
